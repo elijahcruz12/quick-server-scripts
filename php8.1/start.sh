@@ -92,6 +92,25 @@ if [ "$mysql" = "y" ]; then
     sudo apt install mysql-server -y
     sudo mysql_secure_installation
 
+    # Ask the user if they want to create a new user
+    read -p "Do you want to create a new user? (y/n): " newuser
+
+    if [ "$newuser" = "y" ]; then
+        # Ask the user for the username
+        read -p "Enter the username: " mysqluser
+        # Ask the user for the password
+        read -p "Enter the password: " mysqlpassword
+
+        # Create the user
+        echo "Creating the user..."
+        # Create the user with the password and use the native extension for MySQL
+        sudo mysql -e "CREATE USER '$mysqluser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$mysqlpassword';"
+        # Grant all privileges to the user
+        sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO '$mysqluser'@'localhost';"
+        # Flush the privileges
+        sudo mysql -e "FLUSH PRIVILEGES;"
+    fi
+
     # Ask the user if they want to install phpMyAdmin
     read -p "Do you want to install phpMyAdmin? (y/n): " phpmyadmin
     
